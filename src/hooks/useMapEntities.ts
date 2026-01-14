@@ -33,7 +33,7 @@ export function useMapEntities() {
                         newMarkers.push({
                             id: u.id,
                             type: 'user',
-                            coordinates: [u.lng, u.lat],
+                            coordinates: [u.location_lng, u.location_lat],
                             data: {
                                 id: u.id,
                                 display_name: u.display_name || 'Anonymous',
@@ -53,7 +53,7 @@ export function useMapEntities() {
                         newMarkers.push({
                             id: d.id,
                             type: 'content', // Use content type for special drops
-                            coordinates: [d.lng, d.lat],
+                            coordinates: [d.location_lng, d.location_lat],
                             data: {
                                 id: d.id,
                                 title: d.title,
@@ -107,7 +107,7 @@ export function useMapEntities() {
                         newMarkers.push({
                             id: asset.id,
                             type: 'activity', // Reuse activity styling or add new gift type
-                            coordinates: [asset.lng, asset.lat],
+                            coordinates: [asset.location_lng, asset.location_lat],
                             data: {
                                 id: asset.id,
                                 title: asset.name || 'Asset Fragment',
