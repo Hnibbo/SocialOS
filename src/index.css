@@ -70,16 +70,18 @@
     background: hsl(var(--primary));
   }
 
-  /* Hide default cursor on desktops to show CustomCursor */
+  /* Hide default cursor on desktops to show CustomCursor
+     Temporarily disabled for debugging usability
   @media (pointer: fine) {
 
     *,
     a,
     button,
     input {
-      cursor: none !important;
+      cursor: auto !important; 
     }
   }
+  */
 }
 
 @layer base {
