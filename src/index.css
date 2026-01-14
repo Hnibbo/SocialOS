@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    /* Hup Electric Palette */
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 270 100% 60%;
+    /* Electric Purple */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 190 100% 50%;
+    /* Cyan Neon */
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 320 100% 55%;
+    /* Hot Pink */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 270 100% 60%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 240 5% 64.9%;
+    --sidebar-primary: 263 90% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4% 16%;
+    --sidebar-accent-foreground: 240 5% 90%;
+    --sidebar-border: 240 4% 16%;
+    --sidebar-ring: 263 90% 65%;
+  }
+
+  /* Custom Scrollbar for "Premium" Feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+
+  /* Hide default cursor on desktops to show CustomCursor */
+  @media (pointer: fine) {
+
+    *,
+    a,
+    button,
+    input {
+      cursor: none !important;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Premium "Social OS" mesh gradient */
+    background:
+      radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%),
+      linear-gradient(to bottom, #050505, #000000);
+    background-attachment: fixed;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Utilities */
+  .glass-panel {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass {
+    @apply bg-background/80 backdrop-blur-lg border-b border-white/5;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/70;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: white;
+    /* Fallback */
+  }
+
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-purple-400;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #8B5CF6;
+    /* Fallback */
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500;
+  }
+
+  /* Glassmorphism v4 (Deep Blur + Noise) */
+  .theme-glass .glass-panel {
+    @apply bg-black/60 backdrop-blur-3xl border border-white/10;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .theme-glass .bg-card {
+    @apply bg-zinc-900/40 backdrop-blur-2xl border-white/10;
+  }
+
+  .theme-glass .bg-background {
+    background-color: #050505;
+    background-image:
+      radial-gradient(circle at 50% 0%, #2e2e4a 0%, #050505 40%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+
+    100% {
+      transform: translateY(0px);
+    }
+  }
+}
+
+/* Dynamic Brand Injection Support */
+:root {
+  --dynamic-primary: var(--primary-hex, #8B5CF6);
+  --dynamic-accent: var(--accent-hex, #D946EF);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--dynamic-primary), var(--dynamic-accent)) !important;
+}
+
+.glow-primary {
+  box-shadow: 0 0 20px -5px var(--dynamic-primary) !important;
+}
+
+.text-gradient-primary {
+  background: linear-gradient(to right, var(--dynamic-primary), var(--dynamic-accent), #a78bfa) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
