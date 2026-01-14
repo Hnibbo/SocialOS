@@ -1,10 +1,7 @@
--- EMERGENCY FIX: RPC Functions & Realtime (REVISED)
--- This migration forces the update of RPC functions to match frontend calls exactly.
+-- EMERGENCY FIX: RPC Functions & Realtime (REVISED V3)
+-- Final standardization of parameter names to: lat, lng, radius_meters
 
--- 1. Ensure Realtime is ENABLED for critical tables
--- We use SET TABLE to define the exact list, avoiding "already exists" errors.
 BEGIN;
-  -- Create publication if not exists
   DO $$
   BEGIN
       IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
@@ -12,7 +9,6 @@ BEGIN;
       END IF;
   END
   $$;
-  -- Set tables (this overwrites the list, ensuring these are included)
   ALTER PUBLICATION supabase_realtime SET TABLE 
     user_presence, 
     live_streams, 
@@ -22,7 +18,7 @@ BEGIN;
     user_profiles;
 COMMIT;
 
--- 2. Drop existing functions by signature to ensure clean slate
+-- Drop existing functions to ensure clean slate
 DROP FUNCTION IF EXISTS public.find_nearby_users(double precision, double precision, integer) CASCADE;
 DROP FUNCTION IF EXISTS public.find_nearby_activities(double precision, double precision, integer) CASCADE;
 DROP FUNCTION IF EXISTS public.find_nearby_groups(double precision, double precision, integer) CASCADE;
@@ -30,19 +26,15 @@ DROP FUNCTION IF EXISTS public.find_nearby_drops(double precision, double precis
 DROP FUNCTION IF EXISTS public.find_nearby_assets(double precision, double precision, integer) CASCADE;
 DROP FUNCTION IF EXISTS public.update_user_location(float, float) CASCADE;
 
--- Drop potential variants to clear ambiguity
+-- Drop generic float variants/old param names
 DROP FUNCTION IF EXISTS public.find_nearby_users(float, float, integer) CASCADE;
-DROP FUNCTION IF EXISTS public.find_nearby_users(numeric, numeric, integer) CASCADE;
 DROP FUNCTION IF EXISTS public.find_nearby_activities(float, float, integer) CASCADE;
-DROP FUNCTION IF EXISTS public.find_nearby_activities(numeric, numeric, integer) CASCADE;
 
--- 3. Re-create functions with EXACT parameter names expected by frontend
-
--- find_nearby_users
+-- 1. find_nearby_users
 CREATE OR REPLACE FUNCTION public.find_nearby_users(
-    p_lat double precision,
-    p_lng double precision,
-    p_radius_meters integer
+    lat double precision,
+    lng double precision,
+    radius_meters integer
 )
 RETURNS TABLE (
     id uuid,
@@ -72,19 +64,19 @@ BEGIN
     AND up.last_known_location IS NOT NULL
     AND ST_DWithin(
         up.last_known_location,
-        ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography,
-        p_radius_meters
+        ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography,
+        radius_meters
     )
     ORDER BY up.last_seen DESC
     LIMIT 100;
 END;
 $$;
 
--- find_nearby_activities
+-- 2. find_nearby_activities
 CREATE OR REPLACE FUNCTION public.find_nearby_activities(
-    p_lat double precision,
-    p_lng double precision,
-    p_radius_meters integer
+    lat double precision,
+    lng double precision,
+    radius_meters integer
 )
 RETURNS TABLE (
     id uuid,
@@ -107,16 +99,16 @@ BEGIN
         a.start_time, a.end_time, a.location_name
     FROM public.activities a
     WHERE a.status = 'active' AND a.start_time >= NOW() AND a.location IS NOT NULL
-    AND ST_DWithin(a.location, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography, p_radius_meters)
+    AND ST_DWithin(a.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
     ORDER BY a.start_time ASC LIMIT 50;
 END;
 $$;
 
--- find_nearby_groups
+-- 3. find_nearby_groups
 CREATE OR REPLACE FUNCTION public.find_nearby_groups(
-    p_lat double precision,
-    p_lng double precision,
-    p_radius_meters integer
+    lat double precision,
+    lng double precision,
+    radius_meters integer
 )
 RETURNS TABLE (
     id uuid, name text, description text, member_count integer,
@@ -131,16 +123,16 @@ BEGIN
         g.cover_url
     FROM public.groups g
     WHERE g.location IS NOT NULL AND g.is_public = true
-    AND ST_DWithin(g.location, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography, p_radius_meters)
+    AND ST_DWithin(g.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
     ORDER BY g.member_count DESC LIMIT 50;
 END;
 $$;
 
--- find_nearby_drops
+-- 4. find_nearby_drops
 CREATE OR REPLACE FUNCTION public.find_nearby_drops(
-    p_lat double precision,
-    p_lng double precision,
-    p_radius_meters integer
+    lat double precision,
+    lng double precision,
+    radius_meters integer
 )
 RETURNS TABLE (
     id uuid, title text, description text, drop_type text,
@@ -157,17 +149,20 @@ BEGIN
         md.start_time, md.end_time, COALESCE(md.radius_meters, 500) as radius, md.location_name
     FROM public.moment_drops md
     WHERE md.start_time <= NOW() AND md.end_time >= NOW() AND md.location_coords IS NOT NULL
-    AND ST_DWithin(ST_SetSRID(ST_MakePoint((md.location_coords->>'lng')::double precision, (md.location_coords->>'lat')::double precision), 4326)::geography,
-        ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography, p_radius_meters)
+    AND ST_DWithin(ST_SetSRID(ST_MakePoint(
+        (md.location_coords->>'lng')::double precision, 
+        (md.location_coords->>'lat')::double precision
+    ), 4326)::geography,
+    ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
     ORDER BY md.created_at DESC LIMIT 30;
 END;
 $$;
 
--- find_nearby_assets
+-- 5. find_nearby_assets
 CREATE OR REPLACE FUNCTION public.find_nearby_assets(
-    p_lat double precision,
-    p_lng double precision,
-    p_radius_meters integer
+    lat double precision,
+    lng double precision,
+    radius_meters integer
 )
 RETURNS TABLE (
     id uuid, name text, description text, asset_type text,
@@ -182,12 +177,12 @@ BEGIN
         da.metadata
     FROM public.digital_assets da
     WHERE da.location IS NOT NULL AND (da.is_claimed = false OR da.is_claimed IS NULL)
-    AND ST_DWithin(da.location, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography, p_radius_meters)
+    AND ST_DWithin(da.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
     ORDER BY da.created_at DESC LIMIT 20;
 END;
 $$;
 
--- update_user_location
+-- 6. update_user_location
 CREATE OR REPLACE FUNCTION public.update_user_location(lat float, lng float)
 RETURNS void AS $$
 BEGIN
@@ -200,7 +195,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Grant execute permissions with SPECIFIC SIGNATURES to avoid ambiguity
+-- Grant permissions for specific signatures
 GRANT EXECUTE ON FUNCTION public.find_nearby_users(double precision, double precision, integer) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.find_nearby_activities(double precision, double precision, integer) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.find_nearby_groups(double precision, double precision, integer) TO authenticated;

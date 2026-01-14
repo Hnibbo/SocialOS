@@ -16,12 +16,13 @@ export function useMapEntities() {
             setLoading(true);
             try {
                 // Fetch in parallel using correct parameter names from database
+                // Fetch in parallel using correct parameter names from database
                 const [users, activities, groups, drops, assets] = await Promise.all([
-                    supabase.rpc('find_nearby_users', { p_lat: latitude, p_lng: longitude, p_radius_meters: 50000 }),
+                    supabase.rpc('find_nearby_users', { lat: latitude, lng: longitude, radius_meters: 50000 }),
                     supabase.rpc('find_nearby_activities', { lat: latitude, lng: longitude, radius_meters: 50000 }),
-                    supabase.rpc('find_nearby_groups', { p_lat: latitude, p_long: longitude, p_radius_meters: 50000 }),
-                    supabase.rpc('find_nearby_drops', { p_lat: latitude, p_lng: longitude, p_radius_meters: 50000 }),
-                    supabase.rpc('find_nearby_assets', { p_lat: latitude, p_lng: longitude, p_radius_meters: 10000 })
+                    supabase.rpc('find_nearby_groups', { lat: latitude, lng: longitude, radius_meters: 50000 }),
+                    supabase.rpc('find_nearby_drops', { lat: latitude, lng: longitude, radius_meters: 50000 }),
+                    supabase.rpc('find_nearby_assets', { lat: latitude, lng: longitude, radius_meters: 10000 })
                 ]);
 
                 const newMarkers: MapMarker[] = [];
