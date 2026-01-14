@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, ExternalLink, Loader2, Rocket, Landmark, AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 export default function CreatorPortal() {
     const [loading, setLoading] = useState(true);
@@ -44,7 +43,7 @@ export default function CreatorPortal() {
             if (data?.url) {
                 window.location.href = data.url;
             }
-        } catch (err) {
+        } catch (_err) {
             toast.error("Failed to start onboarding", { id: loadingToast });
         }
     };

@@ -74,7 +74,7 @@ export default function Billing() {
             if (data?.url) {
                 window.location.href = data.url;
             }
-        } catch (err) {
+        } catch (_err) {
             toast.error("Failed to open billing portal");
         }
     };

@@ -262,23 +262,8 @@ export default function AppLayout() {
 
             {/* Main Content Wrapper */}
             <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
-                {/* Mobile Header */}
-                <header className="lg:hidden fixed top-0 left-0 right-0 z-40 p-4 flex justify-between items-center bg-black/60 backdrop-blur-xl border-b border-white/5">
-                    <Link to="/" className="flex items-center gap-2">
-                        <img src={hupLogo} alt="Hup" className="w-9 h-9 rounded-xl shadow-lg" />
-                        <span className="font-display font-black text-xl tracking-tighter">Hup</span>
-                    </Link>
+                {/* Header Removed for App-Like Feel */}
 
-                    <div className="flex items-center gap-3">
-                        <PersonaSwitcher />
-                        <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10"
-                        >
-                            <Menu className="w-6 h-6" />
-                        </button>
-                    </div>
-                </header>
 
                 {/* Mobile Sidebar Overlay */}
                 <AnimatePresence>
@@ -355,13 +340,24 @@ export default function AppLayout() {
                 </AnimatePresence>
 
                 {/* Main Content Area */}
-                <main className="flex-1 relative overflow-y-auto lg:p-4 mt-20 lg:mt-0 pb-32 lg:pb-0">
-                    <Outlet />
+                <main className="flex-1 relative overflow-y-auto lg:p-4 pb-32 lg:pb-0 h-full">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={location.pathname}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="h-full"
+                        >
+                            <Outlet />
+                        </motion.div>
+                    </AnimatePresence>
                     <SafetyPanic />
                 </main>
 
                 <div className="lg:hidden">
-                    <BottomDock />
+                    <BottomDock onMenuClick={() => setSidebarOpen(true)} />
                 </div>
             </div>
         </div>

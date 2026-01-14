@@ -340,7 +340,7 @@ export function LiveMap({
             )}
 
             {mapLoaded && (
-                <div className="absolute bottom-24 left-4 right-4 flex justify-center gap-3 overflow-x-auto py-2 no-scrollbar z-20">
+                <div className="absolute bottom-32 left-4 right-4 flex justify-center gap-3 overflow-x-auto py-2 no-scrollbar z-20">
                     {[
                         { label: 'People', icon: '👥', active: showUsers },
                         { label: 'Events', icon: '🎉', active: showActivities },

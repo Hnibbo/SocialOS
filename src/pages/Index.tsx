@@ -25,117 +25,99 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-black text-foreground overflow-hidden flex flex-col relative">
       <SEO
         title="Hup - The Social OS"
         description="Connect with people around you in real-time. Experience the world's first Social Operating System."
         image="/og-image.png"
       />
 
-      {/* App-like Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-background/50 backdrop-blur-xl border-b border-white/5">
-        <Link to="/" className="flex items-center gap-3">
-          <img src={hupLogo} alt="Hup" className="h-8 w-8 rounded-xl" />
-          <span className="font-display text-xl font-bold tracking-tight">Hup</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link to="/login">
-            <Button variant="ghost" className="text-sm">Login</Button>
-          </Link>
-          <Link to="/signup">
-            <Button className="h-10 px-6 rounded-xl font-bold">Join Hup</Button>
-          </Link>
-        </div>
-      </header>
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.2),transparent_70%)]" />
+        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_100%,rgba(236,72,153,0.1),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] bg-center" />
+      </div>
 
-      <main className="flex-1 pt-24 flex flex-col items-center justify-center p-6 relative">
-        {/* Background Atmosphere */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] pointer-events-none -z-10" />
+      <main className="flex-1 flex flex-col items-center justify-between p-6 z-10 relative h-full">
+
+        {/* Top: Logo & Branding */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="pt-12 flex flex-col items-center"
+        >
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-accent p-0.5 shadow-2xl shadow-primary/20 mb-6">
+            <div className="w-full h-full bg-black rounded-[22px] flex items-center justify-center">
+              <img src={hupLogo} alt="Hup" className="w-12 h-12" />
+            </div>
+          </div>
+          <h1 className="text-4xl font-black tracking-tighter text-white mb-2">Social OS</h1>
+          <p className="text-sm font-medium text-white/50 uppercase tracking-widest">Autonomous • Sovereign • Real</p>
+        </motion.div>
 
         <AnimatePresence mode="wait">
           {!showOnboarding ? (
             <motion.div
               key="landing"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.1 }}
-              className="w-full flex flex-col items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="w-full flex-1 flex flex-col justify-end pb-12 items-center"
             >
-              <div className="text-center max-w-2xl mb-12">
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 leading-[0.9]">
-                    AUTONOMOUS <br /> SOCIAL OS
-                  </h1>
-                  <p className="text-xl md:text-2xl text-muted-foreground mb-8 text-balance max-w-xl mx-auto">
-                    The intelligence-first ecosystem for human connection. Real-time proximity, AI matchmaking, and absolute sovereignty.
-                  </p>
-
-                  <div className="flex flex-wrap gap-4 justify-center mb-16">
-                    <Button
-                      size="lg"
-                      onClick={() => setShowOnboarding(true)}
-                      className="h-16 px-10 rounded-2xl text-xl font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 bg-primary hover:bg-primary/90"
-                    >
-                      Experience Hup
-                    </Button>
-                    <Link to="/signup">
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="h-16 px-10 rounded-2xl text-xl font-bold border-white/10 backdrop-blur-md hover:bg-white/5 transition-all"
-                      >
-                        Create ID
-                      </Button>
-                    </Link>
-                  </div>
-
-                  {/* Dynamic Stats Section */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl mx-auto mb-20">
-                    {[
-                      { label: "Active Nodes", value: stats.users.toLocaleString(), icon: Users },
-                      { label: "AI Matches", value: stats.matches.toLocaleString(), icon: Heart },
-                      { label: "Global Reach", value: "99.9%", icon: Globe },
-                      { label: "Sovereign", value: "E2EE", icon: Shield },
-                    ].map((stat, i) => (
-                      <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center justify-center text-center"
-                      >
-                        <stat.icon className="w-5 h-5 mb-2 text-primary/80" />
-                        <div className="text-2xl font-black tracking-tighter">{stat.value}</div>
-                        <div className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">{stat.label}</div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
+              {/* Stats ticker */}
+              <div className="mb-12 flex gap-8">
+                <div className="text-center">
+                  <div className="text-2xl font-black text-white">{stats.users.toLocaleString()}</div>
+                  <div className="text-[10px] uppercase text-white/40 font-bold tracking-widest">Active Nodes</div>
+                </div>
+                <div className="w-px bg-white/10" />
+                <div className="text-center">
+                  <div className="text-2xl font-black text-white">{stats.matches.toLocaleString()}</div>
+                  <div className="text-[10px] uppercase text-white/40 font-bold tracking-widest">Connections</div>
+                </div>
               </div>
 
-              <AppPreview />
+              <div className="w-full max-w-sm space-y-4">
+                <Button
+                  size="lg"
+                  onClick={() => setShowOnboarding(true)}
+                  className="w-full h-14 rounded-2xl text-lg font-bold bg-white text-black hover:bg-white/90 shadow-xl shadow-white/10"
+                >
+                  Create Identity
+                </Button>
+
+                <Link to="/login" className="block w-full">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full h-14 rounded-2xl text-lg font-bold border-white/10 hover:bg-white/5 bg-transparent"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </div>
+
+              <p className="mt-8 text-[10px] text-white/30 text-center max-w-xs leading-relaxed">
+                By entering, you accept off-grid protocols and sovereign data ownership.
+                <Link to="/terms" className="underline hover:text-white/50 ml-1">Terms</Link>
+              </p>
             </motion.div>
           ) : (
             <motion.div
               key="onboarding"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="w-full"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full flex-1 flex flex-col"
             >
+              <div className="absolute top-6 left-0">
+                <Button variant="ghost" onClick={() => setShowOnboarding(false)} className="text-white/50 hover:text-white">Back</Button>
+              </div>
               <OnboardingFlow onComplete={() => window.location.href = '/signup'} />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
-
-      {/* App-like Dock/Footer */}
-      <footer className="p-6 text-center text-[10px] uppercase tracking-widest text-muted-foreground opacity-50">
-        © 2026 Hup Technologies • Encrypted End-to-End
-      </footer>
     </div>
   );
 };

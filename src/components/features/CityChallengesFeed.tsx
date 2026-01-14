@@ -198,7 +198,7 @@ export function CityChallengesFeed({ city = 'New York', limit = 10 }: CityChalle
 
     useEffect(() => {
         const fetchChallenges = async () => {
-            let query = supabase
+            const query = supabase
                 .from('city_challenges')
                 .select('*')
                 .eq('is_active', true)
