@@ -8,27 +8,22 @@ export function useStreamingMap() {
     useEffect(() => {
         const fetchGeoStreams = async () => {
             // In a real app we'd filter by bounds, but for now fetch global active streams
-            const { data } = await supabase
-                .from('live_streams') // Assuming we add lat/lng to live_streams or join with user location
-                .select(`
-                    id,
-                    title,
-                    host_id,
-                    user_profiles!host_id (
-                        location_lat,
-                        location_lng,
-                        avatar_url
-                    )
-                `)
-                .eq('is_active', true);
+            // Fetch active streams with location via RPC to avoid embedding limits
+            const { data, error } = await supabase
+                .rpc('get_active_streams_on_map');
+
+            if (error) {
+                console.error("Error fetching map streams:", error);
+                return;
+            }
 
             if (data) {
                 const streamMarkers: MapMarker[] = data
-                    .filter(s => s.user_profiles?.location_lat && s.user_profiles?.location_lng)
+                    .filter(s => s.location_lat && s.location_lng)
                     .map(s => ({
                         id: s.id,
                         type: 'stream',
-                        coordinates: [s.user_profiles.location_lng!, s.user_profiles.location_lat!] as [number, number],
+                        coordinates: [s.location_lng!, s.location_lat!] as [number, number],
                         data: s
                     }));
                 setMarkers(streamMarkers);

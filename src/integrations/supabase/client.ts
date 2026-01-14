@@ -12,7 +12,7 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
   console.warn('SUPABASE_URL and SUPABASE_ANON_KEY are missing. App running in offline/mock mode.');
 }
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY.trim(), {
   auth: {
     storage: localStorage,
     persistSession: true,
