@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,8 @@ export default function Signup() {
   const [showConfetti, setShowConfetti] = useState(false);
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralFromUrl = searchParams.get("ref");
 
   // Consent states - required for free accounts
   const [marketingConsent, setMarketingConsent] = useState(true);
@@ -50,11 +52,12 @@ export default function Signup() {
         analytics: analyticsConsent,
         third_party: thirdPartyConsent,
         terms_accepted: termsAccepted,
+        referral_code: referralFromUrl,
         timestamp: new Date().toISOString(),
       }));
 
       setShowConfetti(true);
-      toast.success("Account created! Please check your email to verify your account.");
+      toast.success("Account created! Welcome to the network.");
 
       // Delay navigation to let confetti play
       setTimeout(() => {
@@ -79,6 +82,15 @@ export default function Signup() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          {referralFromUrl && (
+            <div className="mb-6 p-3 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Gift className="w-4 h-4 text-primary" />
+                <span className="text-xs font-black uppercase tracking-widest text-primary">Referral Detected</span>
+              </div>
+              <span className="text-[10px] font-mono text-white/60">{referralFromUrl}</span>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

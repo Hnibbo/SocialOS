@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
+import { GlobalFeed } from '@/components/social/GlobalFeed';
+import { CreatePostDialog } from '@/components/social/CreatePostDialog';
+import { Plus } from 'lucide-react';
+import { ElectricButton } from '@/components/ui/electric-button';
+import { GlassCard } from '@/components/ui/glass-card';
 
 export default function SocialGrid() {
     const { markers } = useMapEntities();
@@ -14,6 +19,7 @@ export default function SocialGrid() {
     const [activeTab, setActiveTab] = useState('all');
     const [leaderboard, setLeaderboard] = useState<any[]>([]);
     const [rooms, setRooms] = useState<any[]>([]);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     useEffect(() => {
         if (activeTab === 'dominance') {
@@ -49,11 +55,23 @@ export default function SocialGrid() {
 
     return (
         <div className="min-h-screen bg-black text-white pb-32">
-            <header className="p-6 pt-12 bg-gradient-to-b from-primary/10 to-transparent">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-4xl font-black tracking-tighter italic lg:text-5xl">THE GRID</h1>
-                    <p className="text-sm text-white/80">Neural Social Feed</p>
+            <header className="px-6 py-8 border-b border-white/5 bg-black/40 backdrop-blur-md">
+                <div className="flex justify-between items-end mb-4">
+                    <div>
+                        <h1 className="text-5xl font-black tracking-tighter italic">THE GRID</h1>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-1">Global Neural Feed • Active</p>
+                    </div>
+                    <ElectricButton onClick={() => setIsCreateOpen(true)} className="gap-2">
+                        <Plus className="w-4 h-4" />
+                        New Post
+                    </ElectricButton>
                 </div>
+
+                <CreatePostDialog
+                    isOpen={isCreateOpen}
+                    onClose={() => setIsCreateOpen(false)}
+                    onPostAdded={() => setActiveTab('all')}
+                />
             </header>
 
             <div className="px-6 space-y-8">
@@ -151,10 +169,16 @@ export default function SocialGrid() {
                     </div>
                 )}
 
-                {activeTab !== 'dominance' && activeTab !== 'rooms' && activeTab !== 'drops' && (
-                    <div className="px-6 text-center">
-                        <h2 className="text-2xl font-black mb-6">Loading...</h2>
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                {activeTab === 'all' && (
+                    <GlobalFeed />
+                )}
+
+                {activeTab === 'live' && (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <Zap className="w-16 h-16 text-primary mb-6 animate-pulse" />
+                        <h2 className="text-2xl font-black mb-2 uppercase">Live Transmissions</h2>
+                        <p className="text-muted-foreground mb-8">Scanning frequencies for active streams...</p>
+                        <ElectricButton onClick={() => window.location.href = '/live'}>Scan Spectrum</ElectricButton>
                     </div>
                 )}
             </div>

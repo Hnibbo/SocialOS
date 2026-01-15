@@ -260,7 +260,7 @@
 
 /* Premium Button States */
 .btn-electric {
-  @apply relative overflow-hidden bg-gradient-to-r from-primary to-secondary text-dark font-medium rounded-xl px-6 py-3 transition-all duration-300;
+  @apply relative overflow-hidden bg-gradient-to-r from-primary to-secondary text-black font-medium rounded-xl px-6 py-3 transition-all duration-300;
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
 }
 

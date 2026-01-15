@@ -24,23 +24,25 @@ export default defineConfig(() => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'logo.png', 'logo.svg'],
       manifest: {
-        name: 'Social OS',
-        short_name: 'SocialOS',
+        name: 'Hup – The Social OS',
+        short_name: 'Hup',
         description: 'The first AI-Native Social OS. Sovereign identity, viral connections, and real-world ascension.',
-        theme_color: '#000000',
-        background_color: '#000000',
+        theme_color: '#0a0a0f',
+        background_color: '#0a0a0f',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
           {
             src: 'logo.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: 'logo.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       }

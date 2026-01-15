@@ -46,14 +46,14 @@ export default function Referrals() {
   const [sending, setSending] = useState(false);
   const [rewards, setRewards] = useState<Reward[]>([]);
 
-  const referralLink = `${window.location.origin}/signup?ref=${user?.id?.slice(0, 8) || 'join'}`;
+  const referralLink = `${window.location.origin}/signup?ref=${referralCode || user?.id?.slice(0, 8) || 'join'}`;
 
   const fetchData = async () => {
     if (!user) return;
 
     try {
       const [userResult, referralsResult, rewardsResult] = await Promise.all([
-        supabase.from("users").select("referral_code").eq("id", user.id).single(),
+        supabase.from("user_profiles").select("referral_code").eq("id", user.id).single(),
         supabase.from("referrals").select("*").eq("referrer_id", user.id).order("created_at", { ascending: false }),
         supabase.from("referral_rewards").select("*").eq("is_active", true).order("min_referrals", { ascending: true }),
       ]);

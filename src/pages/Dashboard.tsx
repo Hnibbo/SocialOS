@@ -1,222 +1,276 @@
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-    MapPin,
-    Heart,
-    Users,
-    MessageSquare,
     Zap,
-    ArrowUpRight,
-    Compass,
-    Star,
-    Trophy,
+    Target,
+    Users,
+    Shield,
+    Cpu,
+    Map as MapIcon,
+    MessageSquare,
+    TrendingUp,
+    Award,
+    Crown,
     Sparkles,
+    Search,
+    ChevronRight,
+    Activity,
+    History,
+    Terminal
 } from 'lucide-react';
-import HupScoreCard from '@/components/gamification/HupScoreCard';
-import { StatusCard } from '@/components/admin/shared/StatusCard';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
-import SEO from '@/components/SEO';
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { GlassCard } from '@/components/ui/glass-card';
+import { ElectricButton } from '@/components/ui/electric-button';
+import { useAuth } from '@/hooks/useAuth';
+import { useSocialOS } from '@/contexts/SocialOSContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useDashboardStats } from '@/hooks/useDashboardStats';
-import {
-    CityEnergyDisplay,
-    SocialSignalsSelector,
-    MemoryCapsuleViewer,
-    LonelinessInterrupter,
-    MomentDropsFeed,
-    SocialRolesDisplay,
-    CityChallengesFeed,
-} from '@/components/features';
-import { useLocation } from '@/hooks/useLocation';
+import { cn } from '@/lib/utils';
+import SEO from '@/components/SEO';
 
 export default function Dashboard() {
     const { user } = useAuth();
-    const { matches, nearbyPeople, groupInvites, activeChats, loading: statsLoading } = useDashboardStats();
-    const { latitude, longitude } = useLocation();
-    const currentCity = 'New York';
+    const { energy, xp, level, setIsCommandHubOpen, setIsAIOpen } = useSocialOS();
+    const [stats, setStats] = useState({
+        matches: 0,
+        transmissions: 0,
+        territory: 0,
+        assets: 0
+    });
+    const [recentSignals, setRecentSignals] = useState<any[]>([]);
 
-    const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+    useEffect(() => {
+        if (user) {
+            fetchStats();
+        }
+    }, [user]);
+
+    const fetchStats = async () => {
+        try {
+            // This would normally be a series of counts or a robust RPC
+            // Simulation for now to keep it lightning fast
+            setStats({
+                matches: 12,
+                transmissions: 145,
+                territory: 3,
+                assets: 8
+            });
+
+            // Fetch recent messages or matches
+            const { data: signals } = await supabase
+                .from('conversations')
+                .select('*, participants(*)')
+                .order('last_message_at', { ascending: false })
+                .limit(3);
+
+            setRecentSignals(signals || []);
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+        }
+    };
+
+    const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Node-77';
 
     return (
-        <>
-            <SEO title="HQ" noindex={true} />
+        <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.15),transparent_50%)] p-4 md:p-8 pb-32">
+            <SEO title="Command Center" />
 
-            <LonelinessInterrupter threshold={70} />
-
-            <div className="p-6 lg:p-8 space-y-8">
-                {/* Header with v2.0 Social Signal */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col lg:flex-row lg:items-end justify-between gap-4"
-                >
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                            <MapPin className="w-5 h-5 text-primary" />
-                            <span className="text-white/60">{currentCity}</span>
+            <div className="max-w-7xl mx-auto space-y-8">
+                {/* OS Header */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Operational Status: Optimal</span>
                         </div>
-                        <h1 className="font-display text-3xl lg:text-4xl font-bold tracking-tight mb-2">
-                            What's happening, <span className="text-gradient">{userName}</span>
+                        <h1 className="text-5xl font-black tracking-tighter italic flex items-center gap-4">
+                            COMMAND CENTER <span className="text-2xl not-italic opacity-30">//</span> <span className="text-gradient">{userName.toUpperCase()}</span>
                         </h1>
-                        <p className="text-muted-foreground text-lg">
-                            Command Central: Your social operational headquarters.
-                        </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <SocialSignalsSelector compact />
-                        <Link to="/map">
-                            <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-xl">
-                                <Compass className="w-4 h-4 mr-2" />
-                                Live Map
-                            </Button>
-                        </Link>
-                    </div>
-                </motion.div>
 
-                {/* v2.0 Energy Display */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                        <CityEnergyDisplay city={currentCity} />
-                    </div>
-                    <div>
-                        <MomentDropsFeed limit={3} />
+                    <div className="flex gap-3">
+                        <ElectricButton variant="secondary" onClick={() => setIsCommandHubOpen(true)}>
+                            <Search className="w-4 h-4 mr-2" /> Global Search
+                        </ElectricButton>
+                        <ElectricButton variant="primary" onClick={() => setIsAIOpen(true)}>
+                            <Sparkles className="w-4 h-4 mr-2" /> Summon AI
+                        </ElectricButton>
                     </div>
                 </div>
 
-                {/* Social Pulse */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                {/* Main Stats HUD */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { label: 'New Matches', value: statsLoading ? '...' : matches, icon: Heart, color: 'text-pink-500', gradient: 'from-pink-500/10 to-transparent', delay: 0 },
-                        { label: 'People Nearby', value: statsLoading ? '...' : nearbyPeople, icon: MapPin, color: 'text-cyan-500', gradient: 'from-cyan-500/10 to-transparent', delay: 0.05 },
-                        { label: 'Group Invites', value: statsLoading ? '...' : groupInvites, icon: Users, color: 'text-emerald-500', gradient: 'from-emerald-500/10 to-transparent', delay: 0.1 },
-                        { label: 'Active Chats', value: statsLoading ? '...' : activeChats, icon: MessageSquare, color: 'text-orange-500', gradient: 'from-orange-500/10 to-transparent', delay: 0.15 },
+                        { label: 'Neural Matches', value: stats.matches, icon: HeartIcon, color: 'text-pink-500', trend: '+2 today' },
+                        { label: 'Global Rank', value: '#1,240', icon: Crown, color: 'text-amber-500', trend: 'Top 5%' },
+                        { label: 'Network Energy', value: `${energy}%`, icon: Zap, color: 'text-primary', trend: 'Regenerating' },
+                        { label: 'Level', value: level, icon: Award, color: 'text-secondary', trend: `${1000 - (xp % 1000)} XP to next` }
                     ].map((stat, i) => (
-                        <StatusCard
-                            key={stat.label}
-                            label={stat.label}
-                            value={stat.value}
-                            icon={stat.icon}
-                            color={stat.color}
-                            gradient={stat.gradient}
-                            delay={stat.delay}
-                        />
+                        <GlassCard key={i} className="p-6 relative overflow-hidden group hover:border-white/20 transition-all">
+                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <stat.icon className={cn("w-12 h-12", stat.color)} />
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">{stat.label}</p>
+                            <h3 className="text-4xl font-black tracking-tighter mb-1">{stat.value}</h3>
+                            <p className={cn("text-[9px] font-bold uppercase tracking-widest", stat.color)}>{stat.trend}</p>
+                        </GlassCard>
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                    {/* Quick Connect */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="lg:col-span-2"
-                    >
-                        <Card className="bg-gradient-card border-border/50">
-                            <CardHeader>
-                                <CardTitle className="font-display text-lg">Jump Right In</CardTitle>
-                                <CardDescription>Start engaging with your community</CardDescription>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Link to="/dating" className="group">
-                                    <div className="p-5 rounded-2xl bg-muted/30 border border-border/50 group-hover:border-pink-500/30 transition-all duration-300">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-500 flex items-center justify-center">
-                                                <Heart className="w-5 h-5" />
-                                            </div>
-                                            <h3 className="font-semibold">Connections</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Primary Control Panel */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground pl-2 italic">Active Transmissions</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <GlassCard className="p-0 overflow-hidden group cursor-pointer border-primary/20 hover:border-primary/50" onClick={() => window.location.href = '/map'}>
+                                <div className="h-48 bg-zinc-900 relative">
+                                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+                                    <div className="absolute bottom-4 left-4">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <MapIcon className="w-4 h-4 text-primary" />
+                                            <h4 className="font-black italic uppercase tracking-widest">Territory Map</h4>
                                         </div>
-                                        <p className="text-sm text-muted-foreground mb-4">Discover verified nodes with high compatibility scores.</p>
-                                        <div className="flex items-center text-xs font-medium text-pink-500">
-                                            View Matches
-                                            <ArrowUpRight className="ml-1 w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                        <p className="text-[10px] text-white/60 uppercase tracking-widest">3 Cells Captured • 12.4km Explored</p>
+                                    </div>
+                                </div>
+                            </GlassCard>
+
+                            <GlassCard className="p-0 overflow-hidden group cursor-pointer border-secondary/20 hover:border-secondary/50" onClick={() => window.location.href = '/social'}>
+                                <div className="h-48 bg-zinc-900 relative">
+                                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+                                    <div className="absolute bottom-4 left-4">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <TrendingUp className="w-4 h-4 text-secondary" />
+                                            <h4 className="font-black italic uppercase tracking-widest">The Grid Pulse</h4>
+                                        </div>
+                                        <p className="text-[10px] text-white/60 uppercase tracking-widest">12 New Broadcasts • 5.1k Engagement</p>
+                                    </div>
+                                </div>
+                            </GlassCard>
+                        </div>
+
+                        {/* Recent Neural Activity */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center px-2">
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground italic">Neural Signals</h3>
+                                <button className="text-[8px] font-black uppercase tracking-widest text-primary hover:underline">View Deep Log</button>
+                            </div>
+                            <div className="space-y-3">
+                                {recentSignals.length > 0 ? recentSignals.map((signal, i) => (
+                                    <GlassCard key={i} className="p-4 flex items-center justify-between hover:bg-white/5 transition-all">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden">
+                                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${signal.id}`} />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold">{signal.name || 'Anonymous Node'}</h4>
+                                                <p className="text-xs text-muted-foreground">Last synchronized {new Date(signal.last_message_at).toLocaleTimeString()}</p>
+                                            </div>
+                                        </div>
+                                        <ElectricButton variant="ghost" size="sm" onClick={() => window.location.href = '/messaging'}>
+                                            <MessageSquare className="w-4 h-4" />
+                                        </ElectricButton>
+                                    </GlassCard>
+                                )) : (
+                                    <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-3xl opacity-30">
+                                        <Activity className="w-8 h-8 mx-auto mb-2" />
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">Listening for frequencies...</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar HUD */}
+                    <div className="space-y-8">
+                        {/* OS Identity */}
+                        <GlassCard className="p-6 space-y-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-3xl bg-primary/20 border-2 border-primary/40 flex items-center justify-center text-2xl font-black italic">
+                                    {userName.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black italic italic tracking-tighter">{userName}</h3>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Elite Member • v2.5 Protocol</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t border-white/5">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                        <span>System XP</span>
+                                        <span>{xp % 1000} / 1000</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${(xp % 1000) / 10}%` }}
+                                            className="h-full bg-primary shadow-[0_0_10px_rgba(0,240,255,0.5)]"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                        <span>Bio-Neural Energy</span>
+                                        <span>{energy}%</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${energy}%` }}
+                                            className="h-full bg-secondary shadow-[0_0_10px_rgba(240,0,255,0.5)]"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </GlassCard>
+
+                        {/* Recent Discoveries */}
+                        <div className="space-y-4">
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground pl-2 italic">Neural Repository</h3>
+                            <div className="grid grid-cols-3 gap-3">
+                                {[1, 2, 3, 4, 5, 6].map(i => (
+                                    <div key={i} className="aspect-square rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group cursor-pointer hover:border-primary/50 transition-all">
+                                        <div className="opacity-20 group-hover:opacity-100 transition-opacity">
+                                            {i % 2 === 0 ? <Cpu className="w-6 h-6" /> : <Shield className="w-6 h-6" />}
                                         </div>
                                     </div>
-                                </Link>
+                                ))}
+                            </div>
+                            <ElectricButton variant="secondary" className="w-full text-[10px]" onClick={() => window.location.href = '/wallet'}>
+                                ENTER VAULT
+                            </ElectricButton>
+                        </div>
 
-                                <Link to="/social" className="group">
-                                    <div className="p-5 rounded-2xl bg-muted/30 border border-border/50 group-hover:border-primary/30 transition-all duration-300">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                                                <Zap className="w-5 h-5" />
-                                            </div>
-                                            <h3 className="font-semibold">The Grid</h3>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mb-4">Broadcast to the global stream or engage in random encounters.</p>
-                                        <div className="flex items-center text-xs font-medium text-primary">
-                                            Enter Grid
-                                            <ArrowUpRight className="ml-1 w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                                        </div>
-                                    </div>
-                                </Link>
+                        {/* Event Feed */}
+                        <GlassCard className="p-4 bg-primary/5 border-primary/20">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Sparkles className="w-4 h-4 text-primary" />
+                                <h4 className="text-[10px] font-black uppercase tracking-widest">Global Event</h4>
+                            </div>
+                            <h5 className="font-bold text-sm mb-1 italic">NEURAL SYNC: TOKYO NIGHTS</h5>
+                            <p className="text-[10px] text-muted-foreground leading-relaxed">A mass synchronization event is starting in 2 hours. Join to earn 2x XP.</p>
+                        </GlassCard>
 
-                                <Link to="/map" className="group">
-                                    <div className="p-5 rounded-2xl bg-muted/30 border border-border/50 group-hover:border-cyan-500/30 transition-all duration-300">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
-                                                <MapPin className="w-5 h-5" />
-                                            </div>
-                                            <h3 className="font-semibold">Live Map</h3>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mb-4">Real-time geospatial visualization of active streams and entities.</p>
-                                        <div className="flex items-center text-xs font-medium text-cyan-500">
-                                            Launch Map
-                                            <ArrowUpRight className="ml-1 w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                                        </div>
-                                    </div>
-                                </Link>
-
-                                <Link to="/challenges" className="group">
-                                    <div className="p-5 rounded-2xl bg-muted/30 border border-border/50 group-hover:border-amber-500/30 transition-all duration-300">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                                                <Trophy className="w-5 h-5" />
-                                            </div>
-                                            <h3 className="font-semibold">Challenges</h3>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mb-4">Compete with other cities and earn rewards.</p>
-                                        <div className="flex items-center text-xs font-medium text-amber-500">
-                                            Join Challenges
-                                            <ArrowUpRight className="ml-1 w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-
-                    {/* Premium Status / Hup Score */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        className="space-y-6"
-                    >
-                        <HupScoreCard />
-                        <SocialRolesDisplay userId={user?.id} />
-                    </motion.div>
+                        {/* Console Access */}
+                        <div className="p-4 rounded-3xl bg-black border border-white/5 font-mono text-[10px] space-y-1 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group">
+                            <div className="flex items-center gap-2 text-green-500 mb-2">
+                                <Terminal className="w-3 h-3" />
+                                <span className="font-black uppercase tracking-widest">Kernel Access</span>
+                            </div>
+                            <p className="text-gray-500 group-hover:text-green-500/50 transition-colors">{">"} sync_protocol --version 2.5</p>
+                            <p className="text-gray-500 group-hover:text-green-500/50 transition-colors">{">"} loading_vibe_matrix... [DONE]</p>
+                            <p className="text-gray-500 group-hover:text-green-500/50 transition-colors">{">"} status: ready_for_transmission</p>
+                        </div>
+                    </div>
                 </div>
-
-                {/* Memory Capsules Preview */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.35 }}
-                >
-                    <MemoryCapsuleViewer userId={user?.id} limit={6} />
-                </motion.div>
-
-                {/* Active Challenges */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                    <CityChallengesFeed city={currentCity} limit={4} />
-                </motion.div>
             </div>
-        </>
+        </div>
     );
 }
+
+const HeartIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+);

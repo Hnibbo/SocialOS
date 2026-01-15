@@ -553,3 +553,48 @@ export interface NearbyUser {
     intent_icons: string[];
     anonymous_mode: boolean;
 }
+
+// Agent Marketplace
+export interface MarketplaceAgent {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    category: string;
+    developer_name: string | null;
+    icon_url: string | null;
+    price_xp: number;
+    price_hup: number;
+    default_config: Record<string, unknown>;
+    system_prompt_template: string | null;
+    is_active: boolean;
+    is_featured: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface UserInstalledAgent {
+    id: string;
+    user_id: string;
+    agent_id: string;
+    is_enabled: boolean;
+    custom_config: Record<string, unknown>;
+    last_run_at: string | null;
+    total_runs: number;
+    installed_at: string;
+
+    // Joined data
+    agent?: MarketplaceAgent;
+}
+
+export interface AgentTrace {
+    id: string;
+    user_id: string | null;
+    agent_id: string | null;
+    action_name: string;
+    thought_process: string | null;
+    observation: string | null;
+    result: string | null;
+    metadata: Record<string, unknown>;
+    created_at: string;
+}

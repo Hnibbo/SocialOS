@@ -13,7 +13,8 @@ import {
     Menu, X, LayoutDashboard, Activity, RefreshCw,
     Settings, Shield, DollarSign,
     BarChart3, Users, Building2, Bot, CreditCard,
-    MessageSquare, ChevronDown, ShieldCheck, LogOut, User, Zap
+    MessageSquare, ChevronDown, ShieldCheck, LogOut, User, Zap,
+    Layout
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -37,23 +38,26 @@ const navItems = [
 ];
 
 const sidebarItems = [
-    { href: "/map", label: "Live Map", icon: Activity },
-    { href: "/social", label: "Social Grid", icon: MessageSquare },
-    { href: "/dating", label: "Connections", icon: RefreshCw },
-    { href: "/chat", label: "Random Solo", icon: Zap },
-    { href: "/live", label: "Live Streams", icon: Zap },
-    { href: "/dashboard", label: "HQ", icon: LayoutDashboard },
-    { href: "/wallet", label: "Wallet", icon: DollarSign },
-    { href: "/profile", label: "Identity", icon: User },
+    { href: "/map", label: "World Map", icon: Activity },
+    { href: "/social", label: "Global Feed", icon: MessageSquare },
+    { href: "/messaging", label: "Command Center", icon: Zap },
+    { href: "/connections", label: "Neural Match", icon: RefreshCw },
+    { href: "/live", label: "Transmissions", icon: Zap },
+    { href: "/dashboard/agents", label: "Neural Agents", icon: Bot },
+    { href: "/dashboard", label: "Node Control", icon: LayoutDashboard },
+    { href: "/wallet", label: "Bank & Assets", icon: DollarSign },
+    { href: "/profile", label: "Identity Node", icon: User },
 ];
 
 const adminSidebarItems = [
     { href: "/admin", label: "Admin Core", icon: LayoutDashboard },
     { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+    { href: "/admin/content", label: "Pages Hub", icon: Layout },
     { href: "/admin/users", label: "User Control", icon: Users },
     { href: "/admin/businesses", label: "Businesses", icon: Building2 },
     { href: "/admin/god-mode", label: "God Mode", icon: Bot },
     { href: "/admin/plans", label: "Monetization", icon: CreditCard },
+    { href: "/admin/ai", label: "AI Control", icon: Bot },
     { href: "/admin/security", label: "Security", icon: Shield },
     { href: "/admin/settings", label: "Platform", icon: Settings },
 ];
@@ -108,9 +112,58 @@ export default function AppLayout() {
         return () => document.removeEventListener("keydown", down);
     }, []);
 
+    // Process pending referral on first load
+    useEffect(() => {
+        const handleReferral = async () => {
+            if (!user) return;
+
+            const pendingStr = localStorage.getItem("pendingConsents");
+            if (!pendingStr) return;
+
+            try {
+                const pending = JSON.parse(pendingStr);
+                if (pending.referral_code) {
+                    // Try to get location for the heatmap
+                    let lat: number | undefined;
+                    let lng: number | undefined;
+
+                    try {
+                        const pos = await new Promise<GeolocationPosition>((res, rej) =>
+                            navigator.geolocation.getCurrentPosition(res, rej, { timeout: 3000 })
+                        );
+                        lat = pos.coords.latitude;
+                        lng = pos.coords.longitude;
+                    } catch (e) {
+                        // Location optional for referral
+                    }
+
+                    const { data, error } = await supabase.rpc('process_referral_sign_up', {
+                        p_new_user_id: user.id,
+                        p_referral_code: pending.referral_code,
+                        p_lat: lat,
+                        p_lng: lng
+                    });
+
+                    if (!error && data) {
+                        toast.success("Social network invite activated!", {
+                            description: "Your referral has been recorded."
+                        });
+                        // Remove code to avoid re-runs
+                        const updated = { ...pending };
+                        delete updated.referral_code;
+                        localStorage.setItem("pendingConsents", JSON.stringify(updated));
+                    }
+                }
+            } catch (err) {
+                console.error("Referral processing system error:", err);
+            }
+        };
+
+        handleReferral();
+    }, [user]);
+
     return (
-        <div className="min-h-screen bg-background text-foreground flex overflow-hidden">
-            <CommandPalette open={searchOpen} onOpenChange={setSearchOpen} />
+        <div className="min-h-screen bg-background text-foreground flex overflow-hidden pt-12">
 
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-black/40 backdrop-blur-3xl border-r border-white/5 z-50">

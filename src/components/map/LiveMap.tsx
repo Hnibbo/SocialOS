@@ -13,13 +13,26 @@ import { createRoot } from 'react-dom/client';
 import { MapMarkerContent } from './MapMarker';
 import { useActivities } from '@/hooks/useActivities';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Crown } from 'lucide-react';
+import { X, Crown, Zap, TrendingUp, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
+import { useNavigate } from 'react-router-dom';
 import { useMapEntities } from '@/hooks/useMapEntities';
 import { useStreamingMap } from '@/hooks/useStreamingMap';
 import { useDating } from '@/hooks/useDating';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
+const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371e3;
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+};
 
 interface LiveMapProps {
     className?: string;
@@ -60,31 +73,71 @@ export function LiveMap({
     const [selectedEntity, setSelectedEntity] = useState<MapMarker | null>(null);
     const [territoryInfo, setTerritoryInfo] = useState<any>(null);
     const [showVibe, setShowVibe] = useState(true);
+    const [showViral, setShowViral] = useState(true);
+    const [growthStats, setGrowthStats] = useState({ count: 0, percentage: 0 });
 
-    // Fetch Energy States for Heatmap (disabled - table doesn't exist)
-    // useEffect(() => {
-    //     if (!longitude || !latitude) return;
-    //     const fetchEnergy = async () => {
-    //         const { data } = await supabase
-    //             .from('world_energy_states')
-    //             .select('lat, lng, energy_score')
-    //             .gte('updated_at', new Date(Date.now() - 3600000).toISOString());
-    //         if (data) {
-    //             const geojson = {
-    //                 type: 'FeatureCollection',
-    //                 features: data.map(d => ({
-    //                     type: 'Feature',
-    //                     geometry: { type: 'Point', coordinates: [d.lng, d.lat] },
-    //                     properties: { weight: d.energy_score / 100 }
-    //                 }))
-    //             };
-    //             setEnergyHeatmap(geojson);
-    //         }
-    //     };
-    //     fetchEnergy();
-    //     const interval = setInterval(fetchEnergy, 60000);
-    //     return () => clearInterval(interval);
-    // }, [latitude, longitude]);
+    useEffect(() => {
+        if (!latitude || !longitude) return;
+
+        const fetchSpatialData = async () => {
+            // 1. World Energy Vibe
+            const { data: energy } = await supabase
+                .from('world_energy_states')
+                .select('lat, lng, energy_score');
+
+            if (energy && mapRef.current && mapLoaded) {
+                const energyGeojson = {
+                    type: 'FeatureCollection',
+                    features: energy.map(d => ({
+                        type: 'Feature',
+                        geometry: { type: 'Point', coordinates: [d.lng, d.lat] },
+                        properties: { weight: d.energy_score / 100 }
+                    }))
+                };
+                const source = mapRef.current.getSource('energy-vibe') as maplibregl.GeoJSONSource;
+                if (source) source.setData(energyGeojson as any);
+            }
+
+            // 2. Viral Pulse (Referral Heatmap)
+            if (mapRef.current && mapLoaded) {
+                const { data: viralData } = await supabase.from('viral_pulse_data').select('*');
+                if (viralData) {
+                    const viralGeojson = {
+                        type: 'FeatureCollection',
+                        features: viralData.map((v: any) => ({
+                            type: 'Feature',
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [v.lng, v.lat]
+                            },
+                            properties: { weight: v.weight || 1 }
+                        }))
+                    };
+                    const source = mapRef.current.getSource('viral-pulse') as maplibregl.GeoJSONSource;
+                    if (source) source.setData(viralGeojson as any);
+                }
+            }
+
+            // 3. Growth Stats
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+            const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+
+            const [current, previous] = await Promise.all([
+                supabase.from('referrals').select('id', { count: 'exact', head: true }).gt('created_at', thirtyDaysAgo),
+                supabase.from('referrals').select('id', { count: 'exact', head: true }).gt('created_at', sixtyDaysAgo).lt('created_at', thirtyDaysAgo)
+            ]);
+
+            const currentCount = current.count || 0;
+            const previousCount = previous.count || 0;
+            const percentage = previousCount === 0 ? 100 : Math.round(((currentCount - previousCount) / previousCount) * 100);
+
+            setGrowthStats({ count: currentCount, percentage });
+        };
+
+        fetchSpatialData();
+        const interval = setInterval(fetchSpatialData, 60000);
+        return () => clearInterval(interval);
+    }, [latitude, longitude, mapLoaded]);
 
     // Merge all marker sources
     const markers: MapMarker[] = [
@@ -165,6 +218,37 @@ export function LiveMap({
                         'heatmap-opacity': 0.6
                     }
                 });
+
+                // Add Viral Pulse Heatmap Layer (Pink/Neon for Growth)
+                map.addSource('viral-pulse', {
+                    type: 'geojson',
+                    data: { type: 'FeatureCollection', features: [] }
+                });
+
+                map.addLayer({
+                    id: 'viral-heat',
+                    type: 'heatmap',
+                    source: 'viral-pulse',
+                    maxzoom: 15,
+                    layout: {
+                        'visibility': showViral ? 'visible' : 'none'
+                    },
+                    paint: {
+                        'heatmap-weight': 1,
+                        'heatmap-intensity': 2,
+                        'heatmap-color': [
+                            'interpolate',
+                            ['linear'],
+                            ['heatmap-density'],
+                            0, 'rgba(0,0,0,0)',
+                            0.2, 'rgba(236,72,153,0.3)',
+                            0.5, 'rgba(232,121,249,0.5)',
+                            1, 'rgba(255,255,255,0.9)'
+                        ],
+                        'heatmap-radius': 60,
+                        'heatmap-opacity': 0.7
+                    }
+                });
             });
 
             map.on('click', async (e) => {
@@ -222,8 +306,9 @@ export function LiveMap({
     useEffect(() => {
         if (mapRef.current && mapLoaded) {
             mapRef.current.setLayoutProperty('vibe-heat', 'visibility', showVibe ? 'visible' : 'none');
+            mapRef.current.setLayoutProperty('viral-heat', 'visibility', showViral ? 'visible' : 'none');
         }
-    }, [showVibe, mapLoaded]);
+    }, [showVibe, showViral, mapLoaded]);
 
     useEffect(() => {
         if (mapRef.current && mapLoaded && energyHeatmap) {
@@ -346,7 +431,8 @@ export function LiveMap({
                         { label: 'Events', icon: '🎉', active: showActivities },
                         { label: 'Places', icon: '📍', active: showBusinesses },
                         { label: 'Live', icon: '🔴', active: showStreams },
-                        { label: 'Vibe', icon: '✨', active: showVibe, onClick: () => setShowVibe(!showVibe) }
+                        { label: 'Vibe', icon: '✨', active: showVibe, onClick: () => setShowVibe(!showVibe) },
+                        { label: 'Pulse', icon: '💗', active: showViral, onClick: () => setShowViral(!showViral) }
                     ].map(btn => (
                         <button
                             key={btn.label}
@@ -391,8 +477,18 @@ export function LiveMap({
                                     </div>
                                 )}
                                 <div>
-                                    <h3 className="text-xl font-black tracking-tighter text-white">
+                                    <h3 className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
                                         {selectedEntity.data.display_name || selectedEntity.data.title || selectedEntity.data.name || 'Unknown Node'}
+                                        {(selectedEntity.data.category === 'drop' || selectedEntity.data.category === 'gift') && (
+                                            <Badge variant="outline" className={cn(
+                                                "text-[8px] font-black uppercase tracking-widest",
+                                                getDistance(latitude!, longitude!, selectedEntity.coordinates[1], selectedEntity.coordinates[0]) <= 500
+                                                    ? "border-green-500/50 text-green-500 bg-green-500/10"
+                                                    : "border-white/20 text-white/40"
+                                            )}>
+                                                {Math.round(getDistance(latitude!, longitude!, selectedEntity.coordinates[1], selectedEntity.coordinates[0]))}m
+                                            </Badge>
+                                        )}
                                     </h3>
                                     <p className="text-[10px] uppercase font-black tracking-widest text-primary">
                                         {selectedEntity.type} • {selectedEntity.data.category || 'Standard'}
@@ -412,13 +508,34 @@ export function LiveMap({
                                             if (error) toast.error("Failed to collect");
                                             else toast.success("Asset added to Vault!");
                                             setSelectedEntity(null);
+                                        } else if (selectedEntity.data.category === 'drop') {
+                                            const dist = getDistance(latitude!, longitude!, selectedEntity.coordinates[1], selectedEntity.coordinates[0]);
+                                            if (dist > 500) {
+                                                toast.error(`Out of range! You need to be within 500m (Currently ${Math.round(dist)}m)`);
+                                                return;
+                                            }
+                                            const { data, error } = await supabase.rpc('collect_moment_drop', {
+                                                p_drop_id: selectedEntity.id,
+                                                p_lat: latitude,
+                                                p_lng: longitude
+                                            });
+                                            if (error) toast.error(error.message);
+                                            else if (data) toast.success("Drop collected! Reward added.");
+                                            else toast.error("Could not collect drop");
+                                            setSelectedEntity(null);
                                         }
                                     }}
                                     className="rounded-2xl h-12 bg-primary hover:bg-primary/90 font-bold"
                                 >
-                                    {selectedEntity.data.category === 'gift' ? 'COLLECT' : 'INTERACT'}
+                                    {(selectedEntity.data.category === 'gift' || selectedEntity.data.category === 'drop') ? 'COLLECT' : 'INTERACT'}
                                 </Button>
-                                <Button variant="outline" className="rounded-2xl h-12 border-white/10 hover:bg-white/5 font-bold">
+                                <Button
+                                    variant="outline"
+                                    className="rounded-2xl h-12 border-white/10 hover:bg-white/5 font-bold"
+                                    onClick={() => {
+                                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedEntity.coordinates[1]},${selectedEntity.coordinates[0]}`, '_blank');
+                                    }}
+                                >
                                     NAVIGATE
                                 </Button>
                             </div>
@@ -446,6 +563,21 @@ export function LiveMap({
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Neural Vital Pulse Global Stats */}
+            <div className="absolute top-24 left-4 z-20 pointer-events-auto">
+                <GlassCard className="p-3 bg-black/60 border-primary/20 backdrop-blur-xl">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Global Expansion</p>
+                            <p className="text-sm font-black text-white">{growthStats.percentage >= 0 ? '+' : ''}{growthStats.percentage}% <span className="text-primary">GROWTH</span></p>
+                        </div>
+                    </div>
+                </GlassCard>
+            </div>
 
             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-10" />
         </div>

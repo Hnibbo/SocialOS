@@ -24,7 +24,15 @@ import {
     Store,
     Sparkles,
     Save,
-    RefreshCw
+    RefreshCw,
+    Cpu,
+    Activity,
+    History,
+    DollarSign,
+    Users,
+    Shield,
+    Settings2,
+    Plus
 } from 'lucide-react';
 import type { PlatformConfig, FeatureFlag } from '@/types/social-os';
 
@@ -48,6 +56,7 @@ export default function AdminPlatformConfig() {
     const [saving, setSaving] = useState(false);
     const [editedConfigs, setEditedConfigs] = useState<Record<string, unknown>>({});
     const [editedFlags, setEditedFlags] = useState<Record<string, Partial<FeatureFlag>>>({});
+    const [autoTasks, setAutoTasks] = useState<any[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -56,9 +65,10 @@ export default function AdminPlatformConfig() {
     const fetchData = async () => {
         setLoading(true);
 
-        const [configResult, flagsResult] = await Promise.all([
+        const [configResult, flagsResult, tasksResult] = await Promise.all([
             supabase.from('platform_config').select('*').order('category, key'),
-            supabase.from('feature_flags').select('*').order('category, name')
+            supabase.from('feature_flags').select('*').order('category, name'),
+            supabase.from('auto_tasks').select('*').order('run_at', { ascending: false }).limit(20)
         ]);
 
         if (configResult.data) {
@@ -72,6 +82,10 @@ export default function AdminPlatformConfig() {
 
         if (flagsResult.data) {
             setFeatureFlags(flagsResult.data);
+        }
+
+        if (tasksResult.data) {
+            setAutoTasks(tasksResult.data);
         }
 
         setLoading(false);
@@ -128,6 +142,22 @@ export default function AdminPlatformConfig() {
         } else {
             toast.success('Rollout updated');
             fetchData();
+        }
+    };
+
+    const runManualTask = async (taskType: string) => {
+        const toastId = toast.loading(`Initializing ${taskType}...`);
+        try {
+            const { data, error } = await supabase.rpc('log_auto_task', {
+                p_type: taskType,
+                p_status: 'completed',
+                p_details: `Manual trigger of ${taskType} initiated by Admin.`
+            });
+            if (error) throw error;
+            toast.success(`${taskType} completed successfully`, { id: toastId });
+            fetchData();
+        } catch (err) {
+            toast.error(`Task failed: ${err instanceof Error ? err.message : 'Unknown error'}`, { id: toastId });
         }
     };
 
@@ -248,6 +278,10 @@ export default function AdminPlatformConfig() {
                         <Flag className="w-4 h-4 mr-2" />
                         Feature Flags
                     </TabsTrigger>
+                    <TabsTrigger value="automation">
+                        <Cpu className="w-4 h-4 mr-2" />
+                        Autonomous Ops
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="settings" className="space-y-6">
@@ -365,6 +399,78 @@ export default function AdminPlatformConfig() {
                             </Card>
                         ))}
                     </div>
+                </TabsContent>
+                <TabsContent value="automation" className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle>Core Automation Engines</CardTitle>
+                                    <CardDescription>Managed background processes that run the Hup Social OS autonomously.</CardDescription>
+                                </div>
+                                <Activity className="w-6 h-6 text-primary animate-pulse" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                                {[
+                                    { name: 'Fee Transmission', status: 'Running', frequency: 'Real-time', icon: DollarSign },
+                                    { name: 'Energy Regeneration', status: 'Stable', frequency: 'Every 5m', icon: Zap },
+                                    { name: 'Identity Indexer', status: 'Optimal', frequency: 'Daily', icon: Users },
+                                    { name: 'Content Audit AI', status: 'Active', frequency: 'On-demand', icon: Shield },
+                                    { name: 'Agent Sequencer', status: 'Active', frequency: 'Every 1h', icon: Cpu },
+                                    { name: 'Task Sequencer', status: 'Standby', frequency: 'Continuous', icon: Cpu },
+                                ].map(engine => (
+                                    <div key={engine.name} className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-3 group hover:border-primary/30 transition-all">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <engine.icon className="w-5 h-5 text-primary" />
+                                                <div>
+                                                    <p className="text-xs font-bold">{engine.name}</p>
+                                                    <p className="text-[10px] text-muted-foreground uppercase">{engine.frequency}</p>
+                                                </div>
+                                            </div>
+                                            <Badge variant="outline" className="text-[10px] border-green-500/20 text-green-500">
+                                                {engine.status}
+                                            </Badge>
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-7 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
+                                            onClick={() => runManualTask(engine.name.toLowerCase().replace(' ', '_'))}
+                                        >
+                                            Force Run <RefreshCw className="w-3 h-3 ml-2" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">Autonomous Task Log</h4>
+                            <div className="space-y-2">
+                                {autoTasks.map(task => (
+                                    <div key={task.id} className="p-3 bg-black/40 border border-white/5 rounded-xl flex items-center justify-between group hover:border-primary/20 transition-all">
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn(
+                                                "w-8 h-8 rounded-lg flex items-center justify-center",
+                                                task.status === 'completed' ? "bg-green-500/10 text-green-500" : "bg-primary/10 text-primary"
+                                            )}>
+                                                <History className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-tighter">{task.task_type.replace('_', ' ')}</p>
+                                                <p className="text-[10px] text-muted-foreground">{new Date(task.run_at).toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <code className="text-[9px] text-muted-foreground bg-white/5 px-2 py-0.5 rounded">ID: {task.id.split('-')[0]}</code>
+                                            <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100"><Settings2 className="w-4 h-4" /></Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>

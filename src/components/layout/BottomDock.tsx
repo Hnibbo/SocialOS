@@ -5,8 +5,8 @@ import { useHaptics } from "@/hooks/use-haptics";
 
 const navItems = [
     { href: "/map", label: "Map", icon: Activity },
-    { href: "/chat", label: "Grid", icon: MessageSquare },
-    { href: "/live", label: "Live", icon: Zap },
+    { href: "/social", label: "Feed", icon: MessageSquare },
+    { href: "/connections", label: "Matches", icon: Zap },
     { href: "/dashboard", label: "HQ", icon: LayoutDashboard },
 ];
 

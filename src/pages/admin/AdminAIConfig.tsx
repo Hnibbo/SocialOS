@@ -29,13 +29,12 @@ import {
 } from 'lucide-react';
 import type { AIConfig } from '@/types/social-os';
 
-const AI_MODELS = [
-    { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet (Best)', cost: '$3/$15 per 1M' },
-    { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku (Fast)', cost: '$0.25/$1.25 per 1M' },
-    { value: 'openai/gpt-4o', label: 'GPT-4o', cost: '$2.50/$10 per 1M' },
-    { value: 'openai/gpt-4o-mini', label: 'GPT-4o Mini (Budget)', cost: '$0.15/$0.60 per 1M' },
-    { value: 'google/gemini-pro-1.5', label: 'Gemini Pro 1.5', cost: '$1.25/$5 per 1M' },
-    { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B', cost: '$0.52/$0.75 per 1M' },
+// Dynamic AI Model Discovery
+// Fetches real-time models from OpenRouter or OpenAI
+const STATIC_FALLBACK_MODELS = [
+    { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet', cost: '$3.00' },
+    { value: 'openai/gpt-4o', label: 'GPT-4o', cost: '$2.50' },
+    { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B', cost: '$0.52' },
 ];
 
 const FEATURE_ICONS: Record<string, React.ElementType> = {
@@ -58,12 +57,61 @@ export default function AdminAIConfig() {
         avgLatency: 0,
         overrideRate: 0
     });
+    const [availableModels, setAvailableModels] = useState<any[]>(STATIC_FALLBACK_MODELS);
+    const [modelSearch, setModelSearch] = useState('');
+    const [activeProvider, setActiveProvider] = useState('openrouter');
+    const [keys, setKeys] = useState({ openrouter: '', openai: '' });
 
     useEffect(() => {
         fetchConfigs();
         fetchDecisions();
         fetchStats();
+        fetchKeys();
     }, []);
+
+    useEffect(() => {
+        if (keys.openrouter || keys.openai) {
+            discoverModels();
+        }
+    }, [keys, activeProvider]);
+
+    const fetchKeys = async () => {
+        const { data } = await supabase
+            .from('platform_config')
+            .select('key, value')
+            .in('key', ['openrouter_api_key', 'openai_api_key', 'active_ai_provider']);
+
+        const keyMap: any = {};
+        data?.forEach(item => {
+            if (item.key === 'active_ai_provider') setActiveProvider(JSON.parse(item.value));
+            else keyMap[item.key.split('_')[0]] = JSON.parse(item.value);
+        });
+        setKeys(keyMap);
+    };
+
+    const discoverModels = async () => {
+        try {
+            if (activeProvider === 'openrouter' && keys.openrouter) {
+                const res = await fetch('https://openrouter.ai/api/v1/models');
+                const json = await res.json();
+                if (json.data) {
+                    setAvailableModels(json.data.map((m: any) => ({
+                        value: m.id,
+                        label: m.name,
+                        cost: `$${m.pricing.prompt}/${m.pricing.completion}`
+                    })));
+                }
+            } else if (activeProvider === 'openai' && keys.openai) {
+                // Simplified OpenAI discovery
+                setAvailableModels([
+                    { value: 'gpt-4o', label: 'GPT-4o', cost: 'OpenAI Std' },
+                    { value: 'gpt-4o-mini', label: 'GPT-4o Mini', cost: 'OpenAI Std' },
+                ]);
+            }
+        } catch (error) {
+            console.error('Model discovery failed:', error);
+        }
+    };
 
     const fetchConfigs = async () => {
         const { data, error } = await supabase
@@ -287,25 +335,36 @@ export default function AdminAIConfig() {
                                 <CardContent>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
-                                            <Label>Model</Label>
-                                            <Select
-                                                value={config.model}
-                                                onValueChange={(model) => updateConfig(config.feature, { model })}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {AI_MODELS.map(model => (
-                                                        <SelectItem key={model.value} value={model.value}>
-                                                            <div className="flex justify-between items-center w-full">
-                                                                <span>{model.label}</span>
-                                                                <span className="text-xs text-muted-foreground ml-2">{model.cost}</span>
-                                                            </div>
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <Label>Model (Searchable)</Label>
+                                            <div className="space-y-2">
+                                                <Input
+                                                    placeholder="Search models..."
+                                                    value={modelSearch}
+                                                    onChange={(e) => setModelSearch(e.target.value)}
+                                                    className="h-8 text-xs font-mono"
+                                                />
+                                                <Select
+                                                    value={config.model}
+                                                    onValueChange={(model) => updateConfig(config.feature, { model })}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {availableModels
+                                                            .filter(m => m.label.toLowerCase().includes(modelSearch.toLowerCase()) || m.value.toLowerCase().includes(modelSearch.toLowerCase()))
+                                                            .slice(0, 50)
+                                                            .map(model => (
+                                                                <SelectItem key={model.value} value={model.value}>
+                                                                    <div className="flex justify-between items-center w-64">
+                                                                        <span className="truncate">{model.label}</span>
+                                                                        <span className="text-[10px] text-muted-foreground ml-2 whitespace-nowrap opacity-50">{model.cost}</span>
+                                                                    </div>
+                                                                </SelectItem>
+                                                            ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
 
                                         <div>
