@@ -69,7 +69,7 @@ const MomentsPage = lazy(() => import("./pages/Moments"));
 const ChallengesPage = lazy(() => import("./pages/Challenges"));
 const MemoriesPage = lazy(() => import("./pages/Memories"));
 const MessagingPage = lazy(() => import("./pages/MessagingPage"));
-const ProfileDiscovery = lazy(() => import("./components/profile/ProfileDiscovery"));
+const ProfileDiscovery = lazy(() => import("./components/profile/ProfileDiscovery").then(m => ({ default: m.ProfileDiscovery })));
 
 const queryClient = new QueryClient();
 
@@ -150,7 +150,7 @@ const AppContent = () => {
             <Route path="/dashboard/agents" element={<DashboardAgents />} />
             <Route path="/dashboard/marketplace" element={<Marketplace />} />
 
-            <Route element={<AdminRoute><AppLayout adminMode={true} /></AdminRoute>}>
+            <Route element={<AdminRoute><AppLayout /></AdminRoute>}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
