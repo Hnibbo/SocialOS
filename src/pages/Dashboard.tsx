@@ -120,7 +120,7 @@ export default function Dashboard() {
                     <div className="lg:col-span-2 space-y-8">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground pl-2 italic">Active Transmissions</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <GlassCard className="p-0 overflow-hidden group cursor-pointer border-primary/20 hover:border-primary/50" onClick={() => window.location.href = '/map'}>
+                            <GlassCard className="p-0 overflow-hidden group border-primary/20 hover:border-primary/50" onClick={() => window.open('/map', '_self')}>
                                 <div className="h-48 bg-zinc-900 relative">
                                     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
@@ -134,7 +134,7 @@ export default function Dashboard() {
                                 </div>
                             </GlassCard>
 
-                            <GlassCard className="p-0 overflow-hidden group cursor-pointer border-secondary/20 hover:border-secondary/50" onClick={() => window.location.href = '/social'}>
+                            <GlassCard className="p-0 overflow-hidden group border-secondary/20 hover:border-secondary/50" onClick={() => window.open('/social', '_self')}>
                                 <div className="h-48 bg-zinc-900 relative">
                                     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
