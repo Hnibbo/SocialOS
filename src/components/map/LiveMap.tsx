@@ -21,6 +21,7 @@ import { useMapEntities } from '@/hooks/useMapEntities';
 import { useStreamingMap } from '@/hooks/useStreamingMap';
 import { useDating } from '@/hooks/useDating';
 import { Badge } from '@/components/ui/badge';
+import { GlassCard } from '@/components/ui/glass-card';
 import { cn } from '@/lib/utils';
 
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {

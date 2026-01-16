@@ -138,7 +138,7 @@ export const HupAIAssistant: React.FC<{ isOpen: boolean; onClose: () => void }> 
     }, [isOpen, activeTab]);
 
     const handleSend = async () => {
-        if (!input.trim() || !user || isLoading) return;
+        if (!input.trim() || !user || isDataLoading) return;
 
         if (!consumeEnergy(2)) {
             setMessages(prev => [...prev, {
@@ -152,7 +152,7 @@ export const HupAIAssistant: React.FC<{ isOpen: boolean; onClose: () => void }> 
         const userMessage: Message = { id: Date.now().toString(), role: 'user', content: input };
         setMessages(prev => [...prev, userMessage]);
         setInput('');
-        setIsLoading(true);
+        setIsDataLoading(true);
 
         try {
             // Save user message to DB
@@ -196,7 +196,7 @@ export const HupAIAssistant: React.FC<{ isOpen: boolean; onClose: () => void }> 
                 content: `Neural link interrupted: ${error.message || 'Re-sync necessary.'}`
             }]);
         } finally {
-            setIsLoading(false);
+            setIsDataLoading(false);
         }
     };
 
@@ -284,7 +284,7 @@ export const HupAIAssistant: React.FC<{ isOpen: boolean; onClose: () => void }> 
                                             </div>
                                         </motion.div>
                                     ))}
-                                    {isLoading && (
+                                    {isDataLoading && (
                                         <div className="flex gap-4">
                                             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center"><Bot className="w-4 h-4 text-primary animate-pulse" /></div>
                                             <div className="flex gap-1.5 p-4 rounded-2xl bg-white/5">
