@@ -1,4 +1,4 @@
-import { stripe } from '@/lib/stripe';
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface SubscriptionPlan {
@@ -33,7 +33,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
         description: 'Unlock premium features',
         price: 9.99,
         interval: 'month',
-        stripePriceId: process.env.VITE_STRIPE_PRO_MONTHLY_PRICE_ID || '',
+        stripePriceId: import.meta.env.VITE_STRIPE_PRO_MONTHLY_PRICE_ID || '',
         popular: true,
         features: [
             'Unlimited matches',
@@ -50,7 +50,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
         description: 'Everything you need to dominate',
         price: 29.99,
         interval: 'month',
-        stripePriceId: process.env.VITE_STRIPE_ELITE_MONTHLY_PRICE_ID || '',
+        stripePriceId: import.meta.env.VITE_STRIPE_ELITE_MONTHLY_PRICE_ID || '',
         features: [
             'All Pro features',
             'Exclusive events',
@@ -126,17 +126,27 @@ export async function createPortalSession(customerId: string) {
 export async function getCurrentSubscription(userId: string) {
     try {
         const { data, error } = await supabase
-            .from('user_profiles')
-            .select('subscription_tier, subscription_status, subscription_end')
-            .eq('id', userId)
-            .single();
+            .from('ai_subscriptions')
+            .select('plan_type, status, expires_at')
+            .eq('user_id', userId)
+            .order('expires_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
         if (error) throw error;
 
+        if (!data) {
+            return {
+                tier: 'free',
+                status: 'inactive',
+                endDate: null,
+            };
+        }
+
         return {
-            tier: data.subscription_tier || 'free',
-            status: data.subscription_status || 'inactive',
-            endDate: data.subscription_end ? new Date(data.subscription_end) : null,
+            tier: data.plan_type || 'free',
+            status: data.status || 'inactive',
+            endDate: data.expires_at ? new Date(data.expires_at) : null,
         };
     } catch (error) {
         console.error('Error fetching subscription:', error);
