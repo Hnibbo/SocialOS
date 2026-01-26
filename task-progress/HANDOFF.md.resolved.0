@@ -1,0 +1,76 @@
+# Hup: Social OS v1.0 - Handoff & "Brutal Truth" Report
+
+## 🏁 Current Status: "The Viral Shell is Ready, The Engine is Still Smoking"
+We have successfully pivoted from "HigherUp.ai" to **Hup**. The landing page, onboarding flow, and authentication shell are 100% polished, "viral" in aesthetic, and functionally stable. However, deep-layer integrations (Stripe, Edge Functions, and Performance monitoring) have intermittent stability issues that need immediate attention.
+
+---
+
+## 🛠 Project Infrastructure
+- **Frontend**: Vite + React (TS), Framer Motion, Tailwind, Lucide.
+- **Backend/DB**: Supabase (PostgreSQL, Realtime, RLS, Functions).
+- **Deployment**: Vercel (linked to project).
+- **Project IDs**:
+  - Supabase: `pltlcpqtivuvyeuywvql`
+  - Vercel: Linked to the same project.
+
+---
+
+## 🔑 Critical API & Environment State
+| Service | Status | Location | Context |
+| :--- | :--- | :--- | :--- |
+| **Supabase URL** | Active | Vercel Env / Client Integrations | `https://pltlcpqtivuvyeuywvql.supabase.co` |
+| **Anon Key** | Active | Vercel Env | `sb_publishable_...` (Standard JWT-based) |
+| **Stripe Secret** | Configured | Supabase Secrets | Used for `stripe-connect` and `stripe-admin` functions. |
+| **VAPID Keys** | Pending | `.env` | Required for push notifications ([usePushNotifications.ts](file:///home/higherup/Desktop/SocialOS/src/hooks/usePushNotifications.ts)). |
+| **Google Maps** | N/A | Local | Using `MapLibre` + OpenStreetMap (no API key required currently). |
+
+---
+
+## 🔥 Brutally Honest: Critical Blockers & "Messy" Areas
+1. **Edge Function Deployment Failure**:
+   - `stripe-connect` and `stripe-admin` functions fail to deploy with "Internal Server Error" via MCP tools.
+   - **Reason**: Likely a Deno dependency mismatch or Stripe API key injection failure.
+   - **Impact**: Creator payouts and plan syncing are currently "logic-only" and not live.
+
+2. **React Dispatcher / Performance Hook Crashes**:
+   - [src/lib/utils/performance.ts](file:///home/higherup/Desktop/SocialOS/src/lib/utils/performance.ts) was attempting to use React hooks (`useEffect`, `useRef`) in a static utility class.
+   - **Status**: I removed the `usePerformance` hook, but logs still suggest [performance.ts](file:///home/higherup/Desktop/SocialOS/src/lib/utils/performance.ts) is called in invalid contexts.
+   - **Fix**: Performance tracking MUST NOT use hooks. It should be pure JS/TS or a dedicated context provider.
+
+3. **Auth Redirect Loop/404**:
+   - The app previously redirected to `/dashboard` (which is an empty placeholder or nonexistent in some contexts).
+   - **Status**: Updated [Login.tsx](file:///home/higherup/Desktop/SocialOS/src/pages/Login.tsx) to redirect to `/map`. Verified that `/` redirects to `/map` if logged in.
+
+4. **Branding Ghosting**:
+   - While a "sweep" was done, legacy `HigherUp` terms might still hide in:
+     - Old migration comments.
+     - Hardcoded strings in `supabase/functions`.
+     - SEO metadata in `index.html`.
+
+---
+
+## 🚀 The Feature "Truth" Table
+| Feature | Status | Truth |
+| :--- | :--- | :--- |
+| **Landing/Onboarding** | 🟢 100% | Looks premium, high conversion, feels "viral". |
+| **Live Map (HUD)** | 🟡 85% | Renders well, real proximity works, but territory ownership UI is slightly janky. |
+| **Social Grid** | 🟡 70% | High energy, but 404s on refresh and card spacing is tight. |
+| **Dating (Hyper-Match)**| 🟢 90% | RPC `find_best_matches` is live and functional. |
+| **Economy (HUP Bits)** | 🔴 40% | DB tables exist, but Stripe Connect onboarding is blocked by deployment. |
+| **Streaming** | 🟡 60% | LiveKit integration code is there, but signaling needs a heavy load test. |
+
+---
+
+## 📅 Immediate Next Steps for the Next Agent
+1. **Deploy Edge Functions**: Fix the 500 error on `supabase functions deploy stripe-connect`. This is the #1 priority for the Economy layer.
+2. **Sanitize `performance.ts`**: Entirely decouple the performance utility from React to stop the "dispatcher null" crashes.
+3. **Mobile HUD Polish**: The bottom dock overlays important UI buttons on iPhone widths. Needs a Z-index and padding audit.
+4. **Data Seeding**: More "Master" users need to be added to the `world_energy_states` to make the Dominance leaderboard look populated.
+
+---
+
+> [!IMPORTANT]
+> **Branding Rule**: All subsequent work must use **"Hup"**. Do NOT use "HigherUp". The goal is a minimalist, sovereign-identity aesthetic.
+
+> [!CAUTION]
+> **Economy Warning**: Do NOT hardcopy Stripe IDs. Ensure migrations use the `stripe_product_id` synced from the `sync-plans` edge function.

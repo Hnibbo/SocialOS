@@ -1,0 +1,390 @@
+
+> hup@1.0.0 lint
+> eslint .
+
+
+/home/higherup/Desktop/SocialOS/src/App.tsx
+   3:10  error  'TooltipProvider' is defined but never used               @typescript-eslint/no-unused-vars
+  28:7   error  'Dashboard' is assigned a value but never used            @typescript-eslint/no-unused-vars
+  43:7   error  'AdminPlatformConfig' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  74:7   error  'ThemeBridge' is assigned a value but never used          @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/admin/AdminLayout.tsx
+  2:10  error  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/admin/GodModeConfig.tsx
+  15:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  66:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:69  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/components/auth/AuthLayout.tsx
+  14:9  error  'navigate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/chat/RealtimeChat.tsx
+  6:10  error  'ScrollArea' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/gamification/HupScoreCard.tsx
+  3:41  error  'incrementMetric' is defined but never used  @typescript-eslint/no-unused-vars
+  6:23  error  'TrendingUp' is defined but never used       @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/layout/AppLayout.tsx
+   1:10  error  'useRef' is defined but never used             @typescript-eslint/no-unused-vars
+  12:35  error  'Gift' is defined but never used               @typescript-eslint/no-unused-vars
+  14:65  error  'Search' is defined but never used             @typescript-eslint/no-unused-vars
+  30:7   error  'navItems' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/layout/BottomDock.tsx
+  2:37  error  'RefreshCw' is defined but never used  @typescript-eslint/no-unused-vars
+  2:63  error  'User' is defined but never used       @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/map/LiveMap.tsx
+    7:23  error    'useNearbyUsers' is defined but never used                                                                                                                                                                               @typescript-eslint/no-unused-vars
+    7:39  error    'usePresence' is defined but never used                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    9:26  error    'UserPresence' is defined but never used                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   16:13  error    'Zap' is defined but never used                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   16:30  error    'VibeIcon' is defined but never used                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   43:5   error    'showContent' is assigned a value but never used                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   49:78  warning  Unexpected any. Specify a different type                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   59:56  warning  Unexpected any. Specify a different type                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   61:56  warning  Unexpected any. Specify a different type                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   93:11  warning  The 'markers' array makes the dependencies of useEffect Hook (at line 291) change on every render. Move it inside the useEffect callback. Alternatively, wrap the initialization of 'markers' in its own useMemo() Hook  react-hooks/exhaustive-deps
+   98:43  warning  Unexpected any. Specify a different type                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  197:8   warning  React Hook useCallback has a missing dependency: 'showVibe'. Either include it or remove the dependency array                                                                                                            react-hooks/exhaustive-deps
+  414:53  error    'data' is assigned a value but never used                                                                                                                                                                                @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/map/MapMarker.tsx
+    3:26  error    'UserPresence' is defined but never used       @typescript-eslint/no-unused-vars
+    3:57  error    'Activity' is defined but never used           @typescript-eslint/no-unused-vars
+   22:30  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   65:40  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   66:30  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  117:29  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  155:15  error    'business' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/monetization/MonetizationDashboard.tsx
+   6:10  error  'Separator' is defined but never used         @typescript-eslint/no-unused-vars
+   7:19  error  'DollarSign' is defined but never used        @typescript-eslint/no-unused-vars
+   7:39  error  'CreditCard' is defined but never used        @typescript-eslint/no-unused-vars
+  15:9   error  'balance' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/monetization/StripeConnectButton.tsx
+  13:52  error    'onConnect' is defined but never used     @typescript-eslint/no-unused-vars
+  27:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:18  error    'error' is defined but never used         @typescript-eslint/no-unused-vars
+  46:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/components/monetization/SubscriptionCard.tsx
+  24:57  error  'onSubscribe' is defined but never used  @typescript-eslint/no-unused-vars
+  39:18  error  'error' is defined but never used        @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/onboarding/AppPreview.tsx
+  2:25  error  'Users' is defined but never used          @typescript-eslint/no-unused-vars
+  2:32  error  'MessageSquare' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/onboarding/OnboardingFlow.tsx
+  3:25  error  'MessageSquare' is defined but never used  @typescript-eslint/no-unused-vars
+  3:64  error  'Globe' is defined but never used          @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/providers/ThemeProvider.tsx
+  62:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/higherup/Desktop/SocialOS/src/components/rtc/LiveKitRoom.tsx
+  2:10  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/safety/SafetyPanic.tsx
+   3:23  error  'EyeOff' is defined but never used  @typescript-eslint/no-unused-vars
+  33:18  error  'err' is defined but never used     @typescript-eslint/no-unused-vars
+  53:18  error  'err' is defined but never used     @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/social/ActivityCard.tsx
+  5:35  error  'DollarSign' is defined but never used  @typescript-eslint/no-unused-vars
+  5:47  error  'Clock' is defined but never used       @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/social/ContentCard.tsx
+  1:19  error  'ContentType' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/social/DatingCard.tsx
+   6:10  error    'X' is defined but never used               @typescript-eslint/no-unused-vars
+   6:13  error    'Heart' is defined but never used           @typescript-eslint/no-unused-vars
+   6:20  error    'Star' is defined but never used            @typescript-eslint/no-unused-vars
+  16:12  error    'exitX' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:37  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  27:48  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/components/social/LiveStreamCard.tsx
+  2:16  error  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  2:29  error  'CardFooter' is defined but never used   @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/social/RandomChat.tsx
+  5:10  error  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  5:16  error  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  5:29  error  'CardHeader' is defined but never used   @typescript-eslint/no-unused-vars
+  5:41  error  'CardTitle' is defined but never used    @typescript-eslint/no-unused-vars
+  5:52  error  'CardFooter' is defined but never used   @typescript-eslint/no-unused-vars
+  6:10  error  'ScrollArea' is defined but never used   @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/components/social/SocialShare.tsx
+  27:11  error  'encodedDesc' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  33:18  error  'err' is defined but never used                   @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/contexts/AuthContext.tsx
+  16:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/use-platform-config.ts
+  56:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useActivities.ts
+  28:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useContent.ts
+  22:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+/home/higherup/Desktop/SocialOS/src/hooks/useDating.ts
+  21:12  error    'matches' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  21:21  error    'setMatches' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  21:44  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  53:48  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  82:18  error    'payload' is defined but never used              @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useGroups.ts
+   5:22  error    'GroupMember' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  26:58  warning  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  52:13  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+/home/higherup/Desktop/SocialOS/src/hooks/useLiveKit.ts
+  3:16  error    'RoomEvent' is defined but never used     @typescript-eslint/no-unused-vars
+  3:41  error    'Track' is defined but never used         @typescript-eslint/no-unused-vars
+  9:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useLocation.ts
+   7:47  error  'GeoPoint' is defined but never used                     @typescript-eslint/no-unused-vars
+  31:9   error  'enableHighAccuracy' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useMapEntities.ts
+   31:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   88:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useMonetization.ts
+   8:54  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   9:40  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  11:21  error    'setBalance' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  64:21  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/usePushNotifications.ts
+  7:11  error  'PushToken' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useRandomChat.ts
+   19:27  error    'setPartnerTyping' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   21:31  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+   35:47  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+   51:42  error    'interests' is assigned a value but never used         @typescript-eslint/no-unused-vars
+   94:44  error    'chatError' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  142:19  error    'listener' is assigned a value but never used          @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useRandomConnect.ts
+  18:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useRealtimeChat.ts
+  49:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useSafety.ts
+    8:11  error    'PanicEvent' is defined but never used    @typescript-eslint/no-unused-vars
+   12:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:99  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   58:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  103:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useSocialIntelligence.ts
+  9:28  error  'setIsolationLevel' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useStreaming.ts
+   31:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  271:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/hooks/useStreamingMap.ts
+  1:20  error  'useCallback' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/hooks/useWebRTCStream.ts
+  25:7  error  'RELAY_THRESHOLD' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/lib/hup-score.ts
+  59:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/lib/utils/performance.ts
+  166:31  error    'endpoint' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  267:21  error    Empty block statement                          no-empty
+  273:40  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  276:50  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  284:21  error    Empty block statement                          no-empty
+
+/home/higherup/Desktop/SocialOS/src/pages/Dashboard.tsx
+    9:3   error    'Plus' is defined but never used                    @typescript-eslint/no-unused-vars
+   11:3   error    'ChevronRight' is defined but never used            @typescript-eslint/no-unused-vars
+   12:3   error    'Star' is defined but never used                    @typescript-eslint/no-unused-vars
+   21:20  error    'useEffect' is defined but never used               @typescript-eslint/no-unused-vars
+   22:10  error    'supabase' is defined but never used                @typescript-eslint/no-unused-vars
+   31:10  error    'activities' is assigned a value but never used     @typescript-eslint/no-unused-vars
+   31:22  error    'setActivities' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   31:48  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   63:9   error    'userName' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  101:24  error    'i' is defined but never used                       @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/Docs.tsx
+   16:3   error    'Search' is defined but never used        @typescript-eslint/no-unused-vars
+   95:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/Index.tsx
+  15:11  error  'config' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/LiveMap.tsx
+   8:10  error  'Button' is defined but never used                        @typescript-eslint/no-unused-vars
+   9:10  error  'Sheet' is defined but never used                         @typescript-eslint/no-unused-vars
+   9:17  error  'SheetContent' is defined but never used                  @typescript-eslint/no-unused-vars
+   9:31  error  'SheetHeader' is defined but never used                   @typescript-eslint/no-unused-vars
+   9:44  error  'SheetTitle' is defined but never used                    @typescript-eslint/no-unused-vars
+   9:56  error  'SheetTrigger' is defined but never used                  @typescript-eslint/no-unused-vars
+  10:10  error  'Tabs' is defined but never used                          @typescript-eslint/no-unused-vars
+  10:16  error  'TabsContent' is defined but never used                   @typescript-eslint/no-unused-vars
+  10:29  error  'TabsList' is defined but never used                      @typescript-eslint/no-unused-vars
+  10:39  error  'TabsTrigger' is defined but never used                   @typescript-eslint/no-unused-vars
+  11:10  error  'Badge' is defined but never used                         @typescript-eslint/no-unused-vars
+  12:10  error  'Switch' is defined but never used                        @typescript-eslint/no-unused-vars
+  13:10  error  'Label' is defined but never used                         @typescript-eslint/no-unused-vars
+  14:10  error  'Slider' is defined but never used                        @typescript-eslint/no-unused-vars
+  16:5   error  'User' is defined but never used                          @typescript-eslint/no-unused-vars
+  17:5   error  'Settings' is defined but never used                      @typescript-eslint/no-unused-vars
+  18:5   error  'MessageSquare' is defined but never used                 @typescript-eslint/no-unused-vars
+  19:5   error  'Heart' is defined but never used                         @typescript-eslint/no-unused-vars
+  20:5   error  'Users' is defined but never used                         @typescript-eslint/no-unused-vars
+  21:5   error  'Calendar' is defined but never used                      @typescript-eslint/no-unused-vars
+  22:5   error  'Radio' is defined but never used                         @typescript-eslint/no-unused-vars
+  23:5   error  'Shield' is defined but never used                        @typescript-eslint/no-unused-vars
+  24:5   error  'Eye' is defined but never used                           @typescript-eslint/no-unused-vars
+  25:5   error  'EyeOff' is defined but never used                        @typescript-eslint/no-unused-vars
+  26:5   error  'Zap' is defined but never used                           @typescript-eslint/no-unused-vars
+  27:5   error  'AlertTriangle' is defined but never used                 @typescript-eslint/no-unused-vars
+  32:13  error  'user' is assigned a value but never used                 @typescript-eslint/no-unused-vars
+  33:13  error  'presence' is assigned a value but never used             @typescript-eslint/no-unused-vars
+  33:23  error  'setAvailability' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  33:40  error  'setVisibility' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  33:55  error  'goInvisible' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  34:12  error  'selectedMarker' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  35:12  error  'settingsOpen' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  35:26  error  'setSettingsOpen' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  36:12  error  'profileOpen' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  36:25  error  'setProfileOpen' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  43:11  error  'handlePanicMode' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  49:11  error  'availabilityOptions' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/RandomChatPage.tsx
+  14:5  error  'Unlock' is defined but never used         @typescript-eslint/no-unused-vars
+  15:5  error  'MessageCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/RandomConnect.tsx
+  14:5  error  'Unlock' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/Settings.tsx
+  322:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/SocialGrid.tsx
+    2:18  error    'AnimatePresence' is defined but never used           @typescript-eslint/no-unused-vars
+    3:15  error    'Play' is defined but never used                      @typescript-eslint/no-unused-vars
+    3:27  error    'Users' is defined but never used                     @typescript-eslint/no-unused-vars
+    3:49  error    'Heart' is defined but never used                     @typescript-eslint/no-unused-vars
+    3:56  error    'Share2' is defined but never used                    @typescript-eslint/no-unused-vars
+    3:64  error    'MapPin' is defined but never used                    @typescript-eslint/no-unused-vars
+    3:72  error    'ArrowRight' is defined but never used                @typescript-eslint/no-unused-vars
+    3:92  error    'Crown' is defined but never used                     @typescript-eslint/no-unused-vars
+    8:10  error    'Card' is defined but never used                      @typescript-eslint/no-unused-vars
+   13:31  error    'entitiesLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   16:52  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+   17:40  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+   22:11  error    'users' is assigned a value but never used            @typescript-eslint/no-unused-vars
+  117:55  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  185:43  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/Wallet.tsx
+   5:52  error    'CardDescription' is defined but never used  @typescript-eslint/no-unused-vars
+  13:54  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  14:42  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminAIConfig.tsx
+  26:5   error    'Settings2' is defined but never used     @typescript-eslint/no-unused-vars
+  52:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminAnalytics.tsx
+   7:5   error  'TrendingUp' is defined but never used        @typescript-eslint/no-unused-vars
+   9:5   error  'ArrowUpRight' is defined but never used      @typescript-eslint/no-unused-vars
+  10:5   error  'ArrowDownRight' is defined but never used    @typescript-eslint/no-unused-vars
+  19:12  error  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminBusinesses.tsx
+  10:5   error    'ExternalLink' is defined but never used      @typescript-eslint/no-unused-vars
+  36:12  error    'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  56:40  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  75:87  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminPayouts.tsx
+   76:54  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  104:21  error    'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminPlatformConfig.tsx
+  50:12  error  'editedFlags' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  50:25  error  'setEditedFlags' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/admin/AdminUsers.tsx
+   87:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  286:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  304:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/higherup/Desktop/SocialOS/src/pages/dashboard/Billing.tsx
+  13:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:18  error    'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/src/pages/dashboard/CreatorPortal.tsx
+   8:10  error    'motion' is defined but never used        @typescript-eslint/no-unused-vars
+  12:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:18  error    'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+/home/higherup/Desktop/SocialOS/supabase/functions/stripe-admin/index.ts
+  32:17  error  Unexpected lexical declaration in case block  no-case-declarations
+  52:17  error  Unexpected lexical declaration in case block  no-case-declarations
+  53:17  error  Unexpected lexical declaration in case block  no-case-declarations
+  65:17  error  Unexpected lexical declaration in case block  no-case-declarations
+  66:17  error  Unexpected lexical declaration in case block  no-case-declarations
+
+/home/higherup/Desktop/SocialOS/supabase/functions/stripe-connect/index.ts
+   37:17  error  Unexpected lexical declaration in case block  no-case-declarations
+   43:17  error  Unexpected lexical declaration in case block  no-case-declarations
+   65:17  error  Unexpected lexical declaration in case block  no-case-declarations
+   76:17  error  Unexpected lexical declaration in case block  no-case-declarations
+   99:17  error  Unexpected lexical declaration in case block  no-case-declarations
+  102:17  error  Unexpected lexical declaration in case block  no-case-declarations
+
+/home/higherup/Desktop/SocialOS/tailwind.config.ts
+  92:15  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  92:47  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+/home/higherup/Desktop/SocialOS/vite.config.ts
+   4:10  error  'componentTagger' is defined but never used  @typescript-eslint/no-unused-vars
+  11:32  error  'mode' is defined but never used             @typescript-eslint/no-unused-vars
+
+✖ 251 problems (173 errors, 78 warnings)
+
